@@ -32,17 +32,24 @@ function Button({children, onClick}){
 
  export default function App() {
 
+  const [friends, setfriends] = useState(initialFriends)
+
   const [ShowAddFnd, setShowAddFnd] = useState(false)
 
   function handleShowFrnd(){
     setShowAddFnd((e) => !e)
   }
 
+  function handleaddfrd(friend){
+    setfriends(friends => [...friends, friend])
+    setShowAddFnd(false)
+  }
   return (
+
     <div className="app">
       <div className="sidebar">
-         <FriendsList />
-         {ShowAddFnd && <FormAddFriend />}
+         <FriendsList friends={friends}/>
+         {ShowAddFnd && <FormAddFriend onAddFriend ={handleaddfrd}/>}
          <Button onClick={handleShowFrnd}>{ShowAddFnd ? "Close" : "Add Friend"}</Button>
       </div>
       <FormSplitBill/>
@@ -51,8 +58,8 @@ function Button({children, onClick}){
 }
 
 
-function FriendsList(){
-  const friends = initialFriends;
+function FriendsList({friends}){
+  
   return <ul>
     {friends.map((friend) => <Friend friend={friend} key={friend.id}/> )}
   </ul>
@@ -75,13 +82,35 @@ function Friend({friend}){
 
 
 
-function FormAddFriend(){
-  return <form className="form-add-friend">
+function FormAddFriend({onAddFriend}){
+
+  const [name, setname] = useState("")
+  const [image, setimage] = useState("")
+
+  function handleAddform(e){
+    e.preventDefault();
+
+    if(!name || !image) return;
+
+    const newFriend = {
+      id: crypto.randomUUID(),
+      name,
+      image,
+      balance: 0,
+    }
+    onAddFriend(newFriend)
+    console.log(newFriend)
+
+    setname("")
+    setimage("")
+  }
+  
+  return <form className="form-add-friend" onSubmit={handleAddform}>
     <label>🫂 Add friend</label>
-    <input type='text' />
+    <input type='text' value={name} onChange={(e) => setname(e.target.value)}/>
 
     <label>📸 Image URL</label>
-    <input type='text' />
+    <input type='text' value={image} onChange={(e) => setimage(e.target.value)}/>
     <Button>Add</Button>
   </form>
 }
