@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const initialFriends = [{
   id: 1232,
   name: "Rohit",
@@ -24,13 +26,24 @@ const initialFriends = [{
 },
 ]
 
+function Button({children, onClick}){
+  return <button className="button" onClick={onClick}>{children}</button>
+}
+
  export default function App() {
+
+  const [ShowAddFnd, setShowAddFnd] = useState(false)
+
+  function handleShowFrnd(){
+    setShowAddFnd((e) => !e)
+  }
+
   return (
     <div className="app">
       <div className="sidebar">
          <FriendsList />
-         <FormAddFriend />
-         <Button>Add Friend</Button>
+         {ShowAddFnd && <FormAddFriend />}
+         <Button onClick={handleShowFrnd}>{ShowAddFnd ? "Close" : "Add Friend"}</Button>
       </div>
       <FormSplitBill/>
     </div>
@@ -60,9 +73,7 @@ function Friend({friend}){
   </li>
 }
 
-function Button({children}){
-  return <button className="button">{children}</button>
-}
+
 
 function FormAddFriend(){
   return <form className="form-add-friend">
